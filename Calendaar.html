@@ -187,12 +187,12 @@
 			z-index: 2;
 			background-color: #212121;
 		}
+
 		/* Span Help classes responsible for   */
 
 		/* Span classes for selecting dates */
-		span{
-			
-		}
+		span {}
+
 		.single-highlight-day {
 			background-color: #212121;
 			width: 30px;
@@ -364,8 +364,8 @@
 			for (const el of span_elements) {
 				el.addEventListener('click', function () {
 					// Select the clicked date
-					
-			console.log(el);
+
+					console.log(el);
 
 					const selectedDate = readingTheDates(el);
 
@@ -388,15 +388,15 @@
 						for (const el of span_elements) {
 							const selectedDate = readingTheDates(el);
 							for (const date of dates) {
-								if (selectedDate === date.endDate && date.startDate === date.endDate){
+								if (selectedDate === date.endDate && date.startDate === date.endDate) {
 									el.classList.add("single-highlight-day");
 								}
-								else if (selectedDate === date.startDate){
+								else if (selectedDate === date.startDate) {
 									el.classList.remove("single-highlight-day")
 									el.classList.remove("middle-highlight-day")
 									el.classList.add("first-highlight-day");
 								}
-								else if (selectedDate === date.endDate){
+								else if (selectedDate === date.endDate) {
 									el.classList.remove("single-highlight-day")
 									el.classList.remove("middle-highlight-day")
 									el.classList.add("last-highlight-day");
@@ -420,27 +420,27 @@
 			for (const el of span_elements) {
 				const selectedDate = readingTheDates(el);
 				for (const date of dates) {
-								if (selectedDate === date.endDate && date.startDate === date.endDate){
-									el.classList.add("single-highlight-day");
-								}
-								else if (selectedDate === date.startDate){
-									el.classList.remove("single-highlight-day")
-									el.classList.remove("middle-highlight-day")
-									el.classList.add("first-highlight-day");
-								}
-								else if (selectedDate === date.endDate){
-									el.classList.remove("single-highlight-day")
-									el.classList.remove("middle-highlight-day")
-									el.classList.add("last-highlight-day");
-								}
-								else if (isDateWithinRange(date.startDate, date.endDate, selectedDate)) {
-									el.classList.remove("single-highlight-day")
-									el.classList.remove("first-highlight-day")
-									el.classList.remove("last-highlight-day")
-									el.classList.add("middle-highlight-day");
-								}
-							}
+					if (selectedDate === date.endDate && date.startDate === date.endDate) {
+						el.classList.add("single-highlight-day");
 					}
+					else if (selectedDate === date.startDate) {
+						el.classList.remove("single-highlight-day")
+						el.classList.remove("middle-highlight-day")
+						el.classList.add("first-highlight-day");
+					}
+					else if (selectedDate === date.endDate) {
+						el.classList.remove("single-highlight-day")
+						el.classList.remove("middle-highlight-day")
+						el.classList.add("last-highlight-day");
+					}
+					else if (isDateWithinRange(date.startDate, date.endDate, selectedDate)) {
+						el.classList.remove("single-highlight-day")
+						el.classList.remove("first-highlight-day")
+						el.classList.remove("last-highlight-day")
+						el.classList.add("middle-highlight-day");
+					}
+				}
+			}
 		}
 		// Datte reading after populeting and formating function
 		function readingTheDates(el) {
