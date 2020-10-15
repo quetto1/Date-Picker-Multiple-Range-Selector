@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Date Picker</title>
+	<style>
+		/* Basic styling for the page (not important for the components) */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-family: "Open sans", sans-serif;
+		}
+
+		body {
+			background: #F6F6F6;
+		}
+
+		/* Date picker wrapper styling  */
+		.date-picker {
+			height: 100%;
+			font-family: "Open sans", sans-serif;
+			position: relative;
+			width: 100%;
+			max-width: 320px;
+			height: 100%;
+			max-height: 350px;
+			cursor: pointer;
+			user-select: none;
+		}
+
+		.date-picker .dates {
+			width: 100%;
+			height: 100%;
+			top: 100%;
+			left: 0;
+			right: 0;
+		}
+
+		/* Header Month/Year and Arrows */
+		.date-picker .dates .month-wrapper {
+			display: flex;
+			justify-content: space-between;
+		}
+
+		.date-picker .dates .month-wrapper .mth {
+			font-size: 14px;
+			padding-top: 25px;
+			text-transform: uppercase;
+			font-weight: bold;
+		}
+
+		/* Arrrows (Right & Left) */
+		.arrow-wrapper-right {
+			position: relative;
+			background-color: #FFFFFF;
+			width: 32px;
+			height: 32px;
+			margin-top: 20px;
+			border-radius: 50%;
+			transition: all 0.2s ease;
+
+		}
+
+		.arrow-wrapper-left {
+			position: relative;
+			background-color: #FFFFFF;
+			width: 32px;
+			height: 32px;
+			margin-top: 20px;
+			border-radius: 50%;
+			transition: all 0.2s ease;
+		}
+
+		.arrow-right {
+			left: 8px;
+			top: 10px;
+			position: absolute;
+			border-right: 3px solid;
+			border-bottom: 3px solid;
+			height: 11px;
+			width: 11px;
+			transform: rotate(-45deg);
+		}
+
+		.arrow-left {
+			left: 11px;
+			top: 10px;
+			position: absolute;
+			border-right: 3px solid;
+			border-bottom: 3px solid;
+			height: 11px;
+			width: 11px;
+			transform: rotate(135deg);
+		}
+
+		.date-picker .dates .month-wrapper .arrow-wrapper:hover {
+			background-color: black;
+			color: white;
+		}
+
+		/* Weekdays  */
+		.date-picker .dates .weekdays {
+			color: #A3A6B4;
+			font-size: 12px;
+			font-weight: bold;
+			text-transform: uppercase;
+			display: flex;
+			padding-top: 15px;
+			padding-bottom: 15px;
+			justify-content: space-around;
+		}
+
+		.contetn-wrapper {
+			border-radius: 10px;
+			margin-top: 6px;
+			width: 100%;
+			max-width: 320px;
+			background-color: #FFFFFF;
+			height: auto;
+			border: 1px solid #E8E9EC;
+			border-collapse: collapse;
+		}
+
+		.date-picker .dates .contetn-wrapper .days {
+			display: grid;
+			grid-template-columns: repeat(7, 1fr);
+			height: auto;
+			font-size: 13px;
+			justify-content: space-around;
+			text-align: center;
+			color: #43425D;
+			border-collapse: collapse;
+
+		}
+
+		.date-picker .dates .contetn-wrapper .days div {
+			min-height: 45px;
+			border: 1px solid #E8E9EC;
+			padding: 14px;
+			border-collapse: collapse;
+			position: relative;
+		}
+
+		.date-picker .dates .contetn-wrapper .days div:nth-last-child(1) {
+			border-bottom-right-radius: 8px;
+		}
+
+		.date-picker .dates .contetn-wrapper .days div:nth-last-child(7) {
+			border-bottom-left-radius: 8px;
+		}
+
+		.date-picker .dates .contetn-wrapper .days span:hover {
+			background-color: #212121;
+			width: 30px;
+			right: 0;
+			left: 7px;
+			top: 7px;
+			padding: 7px;
+			border-radius: 50%;
+			position: absolute;
+			z-index: 0;
+			height: 30px;
+			color: #FFFFFF;
+		}
+
+		/* These classes are added when dates are getting populated on the calendar along with highlights etc.  */
+
+		.pre-date {
+			color: #9EA5A5;
+		}
+
+		.next-date {
+			color: #9EA5A5;
+		}
+
+		.today-day {
+			background-color: pink;
+			color: #FFFFFF;
+			border-radius: 50%;
+		}
+
+		.highlight-day {
+			color: #FFFFFF;
+			z-index: 2;
+			background-color: #212121;
+		}
+		/* Span Help classes responsible for   */
+
+		/* Span classes for selecting dates */
+		span{
+			
+		}
+		.single-highlight-day {
+			background-color: #212121;
+			width: 30px;
+			right: 0;
+			left: 7px;
+			top: 7px;
+			padding: 7px;
+			border-radius: 50%;
+			position: absolute;
+			z-index: 0;
+			height: 30px;
+			color: #FFFFFF;
+		}
+
+		.first-highlight-day {
+			background-color: #212121;
+			width: 39px;
+			right: 0;
+			left: 6px;
+			top: 7px;
+			padding: 7px;
+			padding-left: 1px;
+			border-bottom-left-radius: 30px;
+			border-top-left-radius: 30px;
+			position: absolute;
+			z-index: 0;
+			height: 30px;
+			color: #FFFFFF;
+			pointer-events: none;
+		}
+
+		.middle-highlight-day {
+			background-color: #212121;
+			width: 46px;
+			right: 0;
+			left: -1px;
+			top: 7px;
+			padding: 7px;
+			position: absolute;
+			z-index: 0;
+			height: 30px;
+			color: #FFFFFF;
+			pointer-events: none;
+		}
+
+		.last-highlight-day {
+			background-color: #212121;
+			width: 38px;
+			left: -1px;
+			right: 7px;
+			top: 7px;
+			padding: 7px;
+			padding-right: 1px;
+			border-bottom-right-radius: 30px;
+			border-top-right-radius: 30px;
+			position: absolute;
+			z-index: 0;
+			height: 30px;
+			color: #FFFFFF;
+			pointer-events: none;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="date-picker">
+		<div class="dates">
+			<div class="month-wrapper">
+				<div class="arrow-wrapper-left arrow-wrapper">
+					<div class="arrow-left"></div>
+				</div>
+				<div class="mth"></div>
+				<div class="arrow-wrapper-right arrow-wrapper">
+					<div class="arrow-right"></div>
+				</div>
+			</div>
+			<div class="contetn-wrapper">
+				<div class="weekdays">
+					<div>Mo</div>
+					<div>Tu</div>
+					<div>We</div>
+					<div>Th</div>
+					<div>Fr</div>
+					<div>Sa</div>
+					<div>Su</div>
+				</div>
+				<div class="days"></div>
+			</div>
+		</div>
+	</div>
+	<div class="dates-here"></div>
+	<script>
+		const mth_element = document.querySelector('.date-picker .dates .month-wrapper .mth');
+		const dates_element = document.querySelector('.dates-here')
+
+		const next_mth_element = document.querySelector('.date-picker .dates .month-wrapper .arrow-wrapper-right');
+		const prev_mth_element = document.querySelector('.date-picker .dates .month-wrapper .arrow-wrapper-left');
+		const days_element = document.querySelector('.date-picker .dates .days');
+		const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+		const date = new Date();
+
+		let day = date.getDate(); // gets current day
+		let month = date.getMonth(); // gets current month
+		let year = date.getFullYear(); // gets current year
+
+		// Storing dates here
+		const dates = [];
+		let isFirstDateRangeClick = true;
+		let firstDateClicked;
+		let secondDateClicked;
+
+		// Helper Functions
+		function formatDate(d) {
+			let day = d.getDate();
+			if (day < 10) {
+				day = '0' + day;
+			}
+			let month = d.getMonth() + 1;
+			if (month < 10) {
+				month = '0' + month;
+			}
+			let year = d.getFullYear();
+			return day + '/' + month + '/' + year;
+		}
+		// First Render Month and year
+		mth_element.textContent = months[month] + ' ' + year;
+
+		// FUNCTIONS
+		function populateDates() {
+			const day_elements = document.getElementsByClassName('day');
+			const span_elements = document.getElementsByClassName('default-span');
+			// Number of the last day of the current month 
+			const lastDayCurrentMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+			// Number of the last day of the previous month 
+			const lastDayPrevMonth = new Date(date.getFullYear(), date.getMonth(), 0).getDate();
+			//This variable is responsible for filing the first days in the first row for the current month
+			//  from the previous month
+			const firstDayIndex = new Date(date.getFullYear(), date.getMonth(), 0).getDay();
+			const lastDayIndex = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDay();
+
+			//This variable is responsible for filing the last days in the last row for the current month from the next month
+			const nextDays = 7 - lastDayIndex;
+
+			let days = "";
+			// Show dates from previous month
+			for (let x = firstDayIndex; x > 0; x--) {
+				days += `<div class="day"><span class='default-span pre-date'>${lastDayPrevMonth - x + 1}</div>`;
+			}
+			// populates dates for the current month 
+			for (let i = 1; i <= lastDayCurrentMonth; i++) {
+				const isCurrentDay = i === new Date().getDate();
+				const isCurrentMonth = date.getMonth() === new Date().getMonth();
+				const isCurrentYear = date.getFullYear() === new Date().getFullYear();
+
+				if (isCurrentDay && isCurrentMonth && isCurrentYear) {
+					days += `<div class=" day"><span class='default-span '>${i}</span></div>`;
+				}
+				else {
+					days += `<div class=" day"><span class='default-span current-month-days'>${i}</span></div>`;
+				}
+			}
+			// populates dates from the next month
+			for (let j = 1; j <= nextDays; j++) {
+				days += `<div class=" day"><span class='next-date default-span'>${j}</span></div>`;
+				days_element.innerHTML = days;
+			}
+
+			for (const el of span_elements) {
+				el.addEventListener('click', function () {
+					// Select the clicked date
+					
+			console.log(el);
+
+					const selectedDate = readingTheDates(el);
+
+					// First click selctes the startting date, and adds the highlight calss to it 
+
+					if (isFirstDateRangeClick) {
+						firstDateClicked = selectedDate;
+						el.classList.add("single-highlight-day");
+						isFirstDateRangeClick = false;
+
+					}
+					else {
+						// Select the date range
+						secondDateClicked = selectedDate;
+						const isFirstDateLater = compareTwoDates(firstDateClicked, secondDateClicked);
+						const startDate = isFirstDateLater ? secondDateClicked : firstDateClicked;
+						const endDate = isFirstDateLater ? firstDateClicked : secondDateClicked;
+
+						dates.push({ startDate, endDate });
+						for (const el of span_elements) {
+							const selectedDate = readingTheDates(el);
+							for (const date of dates) {
+								if (selectedDate === date.endDate && date.startDate === date.endDate){
+									el.classList.add("single-highlight-day");
+								}
+								else if (selectedDate === date.startDate){
+									el.classList.remove("single-highlight-day")
+									el.classList.remove("middle-highlight-day")
+									el.classList.add("first-highlight-day");
+								}
+								else if (selectedDate === date.endDate){
+									el.classList.remove("single-highlight-day")
+									el.classList.remove("middle-highlight-day")
+									el.classList.add("last-highlight-day");
+								}
+								else if (isDateWithinRange(date.startDate, date.endDate, selectedDate)) {
+									el.classList.remove("single-highlight-day")
+									el.classList.remove("first-highlight-day")
+									el.classList.remove("last-highlight-day")
+									el.classList.add("middle-highlight-day");
+								}
+							}
+						}
+						isFirstDateRangeClick = true;
+					}
+
+					dates_element.textContent = JSON.stringify(dates);
+				});
+			}
+
+			//This for loop checks if there are any records in the dates array if so. add to them highlight class
+			for (const el of span_elements) {
+				const selectedDate = readingTheDates(el);
+				for (const date of dates) {
+								if (selectedDate === date.endDate && date.startDate === date.endDate){
+									el.classList.add("single-highlight-day");
+								}
+								else if (selectedDate === date.startDate){
+									el.classList.remove("single-highlight-day")
+									el.classList.remove("middle-highlight-day")
+									el.classList.add("first-highlight-day");
+								}
+								else if (selectedDate === date.endDate){
+									el.classList.remove("single-highlight-day")
+									el.classList.remove("middle-highlight-day")
+									el.classList.add("last-highlight-day");
+								}
+								else if (isDateWithinRange(date.startDate, date.endDate, selectedDate)) {
+									el.classList.remove("single-highlight-day")
+									el.classList.remove("first-highlight-day")
+									el.classList.remove("last-highlight-day")
+									el.classList.add("middle-highlight-day");
+								}
+							}
+					}
+		}
+		// Datte reading after populeting and formating function
+		function readingTheDates(el) {
+
+			// Inner value of 
+			let selectedDay = el.innerHTML;
+			if (selectedDay < 10) {
+				selectedDay = '0' + selectedDay;
+			}
+			let selectedYear = year;
+			// Month Selecting
+			let selectedMonth = month + 1;
+			if (el.classList.contains('next-date')) {
+				selectedMonth += 1;
+				if (selectedMonth >= 13) {
+					selectedYear = year + 1;
+					selectedMonth = 1;
+				}
+			}
+
+			if (el.classList.contains('pre-date')) {
+				selectedMonth -= 1;
+				if (selectedMonth <= 0) {
+					selectedYear = year - 1;
+					selectedMonth = 12;
+				}
+			}
+			// If statment resposnible for fixing the year change in December and in January
+			if (el.classList.contains('current-month-days')) {
+				if (selectedYear > year) {
+					selectedYear = year;
+				}
+				else if (selectedYear < year) {
+					selectedYear = year;
+				}
+			}
+			//Month formating
+			if (selectedMonth < 10) {
+				selectedMonth = '0' + selectedMonth;
+			}
+
+			return selectedDay + "/" + selectedMonth + "/" + selectedYear;
+		}
+
+		function compareTwoDates(date1, date2) {
+			d1split = date1.split("/");
+			d2split = date2.split("/");
+
+			var d1 = new Date(d1split[2], parseInt(d1split[1]) - 1, d1split[0]);
+			var d2 = new Date(d2split[2], parseInt(d2split[1]) - 1, d2split[0]);
+
+			return d1 > d2;
+		}
+		function isDateWithinRange(firstDay, lastDay, selectedDay) {
+			firstDaySplit = firstDay.split("/");
+			lastDaySplit = lastDay.split("/");
+			selectedDaySplit = selectedDay.split("/");
+
+			var first = new Date(firstDaySplit[2], parseInt(firstDaySplit[1]) - 1, firstDaySplit[0]);
+			var last = new Date(lastDaySplit[2], parseInt(lastDaySplit[1]) - 1, lastDaySplit[0]);
+			var selected = new Date(selectedDaySplit[2], parseInt(selectedDaySplit[1]) - 1, selectedDaySplit[0]);
+
+			if (first <= selected && last >= selected) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		//shift between 
+		function goToNextMonth(e) {
+			month++;
+			if (month > 11) {
+				month = 0;
+				year++;
+			}
+			mth_element.textContent = months[month] + ' ' + year;
+		}
+		function goToPrevMonth(e) {
+			month--;
+			if (month < 0) {
+				month = 11;
+				year--;
+			}
+			mth_element.textContent = months[month] + ' ' + year;
+		}
+		// EVENT LISTENERS
+		//  Update Month name along with year 
+		next_mth_element.addEventListener('click', goToNextMonth);
+		prev_mth_element.addEventListener('click', goToPrevMonth);
+
+		//Populate dates for new months on arrow click
+		prev_mth_element.addEventListener("click", () => {
+			date.setMonth(date.getMonth() - 1, 1);
+			populateDates();
+		});
+		next_mth_element.addEventListener("click", () => {
+			date.setMonth(date.getMonth() + 1, 1);
+			populateDates();
+		});
+
+		populateDates();
+	</script>
+</body>
+
+</html>
